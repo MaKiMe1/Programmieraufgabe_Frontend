@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, onUpdated, ref } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import { courseObject } from "@/dataObjects/courseObject";
 import Button from "primevue/button";
 import Card from "primevue/card";

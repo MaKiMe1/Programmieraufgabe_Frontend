@@ -2,7 +2,7 @@
   <nav>
     <router-link to="/">Home</router-link> |
     <router-link to="/course">Course</router-link> |
-    <router-link to="/course">Student</router-link> |
+    <router-link to="/student">Student</router-link> |
     <router-link to="/teacher">Teacher</router-link>
   </nav>
   <router-view />

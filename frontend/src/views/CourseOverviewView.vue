@@ -6,9 +6,15 @@
       :itemSize="50"
       class="border-1 surface-border border-round"
       style="width: 200px; height: 200px"
-    ></VirtualScroller>
-    {{ ausgabe }} : Debug
-    <Button @click="getCourses">refresh</Button>
+    >
+      <template v-slot:item="{ item }">
+        <Card>
+          <template #title>{{ item }}</template>
+          <template #content> <p></p> </template
+        ></Card>
+      </template>
+    </VirtualScroller>
+    <Button @click="getCourses">Refresh</Button>
   </div>
 </template>
 

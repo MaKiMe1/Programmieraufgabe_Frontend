@@ -9,6 +9,16 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/CourseOverviewView.vue"),
   },
   {
+    path: "/teacher",
+    name: "teacher",
+    component: () => import("../views/TeacherMaskView.vue"),
+  },
+  {
+    path: "/Student",
+    name: "student",
+    component: () => import("../views/StudentMaskView.vue"),
+  },
+  {
     path: "/course",
     name: "course",
     // route level code-splitting

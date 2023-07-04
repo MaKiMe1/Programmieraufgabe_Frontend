@@ -9,9 +9,14 @@
     >
       <template v-slot:item="{ item }">
         <Card>
-          <template #title>{{ item }}</template>
-          <template #content> <p></p> </template
-        ></Card>
+          <template #title>{{ item.title }}</template>
+          <template #content>
+            <p>{{ item.description }}</p></template
+          >
+          <template #footer>
+            <!-- <Button @click="showCourse(item)">Show</Button> -->
+          </template>
+        </Card>
       </template>
     </VirtualScroller>
     <Button @click="getCourses">Refresh</Button>
@@ -32,7 +37,6 @@ async function getCourses(): Promise<void> {
   try {
     const url = "/course";
     const response = await fetch(url);
-    const ausgabe = ref("fetched");
 
     if (!response.ok) {
       throw new Error(response.statusText);
@@ -44,6 +48,10 @@ async function getCourses(): Promise<void> {
   }
 }
 
+// function showCourse(course: courseObject): void {
+
+// }
+
 onMounted(async () => {
   await getCourses();
 });
@@ -52,6 +60,8 @@ export default defineComponent({
   name: "CourseView",
   components: {
     VirtualScroller,
+    Button,
+    Card,
   },
   setup() {
     return {
@@ -59,6 +69,7 @@ export default defineComponent({
       allCourses,
       ausgabe,
       getCourses,
+      // showCourse,
     };
   },
 });

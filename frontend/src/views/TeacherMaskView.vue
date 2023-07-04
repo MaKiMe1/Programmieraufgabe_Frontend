@@ -2,8 +2,6 @@
   <div class="TeacherMask">
     <h1>Lehrer erstellen</h1>
     <InputText type="text" placeholder="Vorname"></InputText>
-  </div>
-  <div class="TeacherMask">
     <InputText type="text" placeholder="Nachname"></InputText>
   </div>
   <br />
@@ -12,8 +10,9 @@
   </div>
   <br />
   <div>
-    <Dropdown placeholder="Wähle einen Kurs" class="w-full md:w-14rem" />
+    <InputText type="text" placeholder="Fächer"></InputText>
   </div>
+  <br />
   <div>
     <Button label="Press">Press</Button>
   </div>
@@ -30,7 +29,6 @@ export default defineComponent({
   components: {
     Button,
     InputText,
-    Dropdown,
   },
   setup() {
     return {};

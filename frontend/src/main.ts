@@ -12,6 +12,7 @@ import VirtualScroller from "primevue/virtualscroller";
 import Calendar from "primevue/calendar";
 import Toast from "primevue/toast";
 import ToastService from "primevue/toastservice";
+import Panel from "primevue/panel";
 
 //css style from Primevue
 import "primevue/resources/themes/lara-light-indigo/theme.css";

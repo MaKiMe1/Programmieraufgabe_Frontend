@@ -67,22 +67,28 @@ export default defineComponent({
       id: 0,
       name: "",
       surname: "",
-      grade: 0,
       birthDate: date.value,
       courses: [],
       isTeacher: false,
+      grade: 0,
       subjects: [],
     });
 
     async function sendStudent(): Promise<void> {
-      fetch("/user", {
-        method: "POST",
-        body: JSON.stringify(userObject),
-      }).then((res) => {
-        if (!res.ok) {
-          throw new Error(res.statusText);
-        }
-      });
+      try {
+        const response = await fetch("/user", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(userObject),
+        });
+        console.log(JSON.stringify(userObject));
+        if (!response.ok) throw new Error(response.statusText);
+        const serverMessage = await response.json;
+        console.log(serverMessage);
+      } catch (reason) {
+        console.log("reason: ", reason);
+        return;
+      }
     }
 
     function yourFunction() {

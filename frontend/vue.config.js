@@ -8,6 +8,11 @@ module.exports = defineConfig({
         ws: true,
         changeOrigin: true,
       },
+      "/user": {
+        target: "http://localhost:8090/",
+        ws: true,
+        changeOrigin: true,
+      },
     },
   },
 });

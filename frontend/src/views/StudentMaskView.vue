@@ -1,7 +1,10 @@
 <template>
   <div class="StudentMask">
-    <h1>Lehrer erstellen</h1>
-    <InputText type="text" placeholder="Name"></InputText>
+    <h1>Schüler erstellen</h1>
+    <InputText type="text" placeholder="Vornamen"></InputText>
+  </div>
+  <div class="StudentMask">
+    <InputText type="text" placeholder="Nachnamen"></InputText>
   </div>
   <br />
   <div>

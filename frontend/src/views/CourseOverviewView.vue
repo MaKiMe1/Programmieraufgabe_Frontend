@@ -2,36 +2,37 @@
   <div class="Kursübersicht">
     <h1>Kursübersicht</h1>
     <VirtualScroller
-      :items="allCourses"
+      :items="state.allCourses"
       :itemSize="50"
       class="border-1 surface-border border-round"
       style="width: 200px; height: 200px"
     >
       <template v-slot:item="{ item }">
-        <Card>
-          <template #title>{{ item.title }}</template>
-          <template #content>
-            <p>{{ item.description }}</p></template
-          >
-          <template #footer>
-            <!-- <Button @click="showCourse(item)">Show</Button> -->
-          </template>
-        </Card>
+        <router-link :to="{ name: 'course', params: { id: item.id - 1 } }">
+          <Card>
+            <template #title>{{ item.title }}</template>
+            <template #content>
+              <p>{{ item.description }}</p></template
+            >
+            <template #footer>
+              <!-- <Button @click="showCourse(item.id)">Show</Button> -->
+            </template>
+          </Card>
+        </router-link>
       </template>
     </VirtualScroller>
     <Button @click="getCourses">Refresh</Button>
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { defineComponent, onMounted, ref } from "vue";
 import { courseObject } from "@/dataObjects/courseObject";
 import Button from "primevue/button";
 import Card from "primevue/card";
 import VirtualScroller from "primevue/virtualscroller";
-
-const allCourses = ref<courseObject[]>();
-const ausgabe = ref("test");
+import { state } from "@/components/state";
+// import { useRouter } from "vue-router";
 
 async function getCourses(): Promise<void> {
   try {
@@ -42,35 +43,43 @@ async function getCourses(): Promise<void> {
       throw new Error(response.statusText);
     }
     const jsonData: courseObject[] = await response.json();
-    allCourses.value = jsonData;
+    state.allCourses = jsonData;
   } catch (reason) {
-    ausgabe.value = `${reason}`;
+    return;
   }
 }
 
-// function showCourse(course: courseObject): void {
+// const router = useRouter();
 
+// function showCourse(id: Number): void {
+//   router.push({
+//     path: "/kurs",
+//     params: {
+//       id
+//     },
+//   });
 // }
 
 onMounted(async () => {
   await getCourses();
 });
 
-export default defineComponent({
-  name: "CourseView",
-  components: {
-    VirtualScroller,
-    Button,
-    Card,
-  },
-  setup() {
-    return {
-      onMounted,
-      allCourses,
-      ausgabe,
-      getCourses,
-      // showCourse,
-    };
-  },
-});
+// export default defineComponent({
+//   name: "CourseOverviewView",
+//   components: {
+//     VirtualScroller,
+//     Button,
+//     Card,
+//   },
+//   setup() {
+//     return {
+//       onMounted,
+//       getCourses,
+//       showCourse,
+//       state,
+//       router,
+//       useRouter,
+//     };
+//   },
+// });
 </script>

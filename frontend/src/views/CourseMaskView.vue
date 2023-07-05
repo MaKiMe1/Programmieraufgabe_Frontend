@@ -64,8 +64,17 @@
     />
   </div>
   <br />
-  <div>
-    <Button @click="sendCourse" label="Press">Press</Button>
+  <div class="card flex justify-content-center">
+    <Toast />
+    <div class="flex flex-wrap gap-2">
+      <Button
+        @click="
+          sendCourse();
+          showInfo();
+        "
+        >Send</Button
+      >
+    </div>
   </div>
 </template>
 
@@ -76,6 +85,8 @@ import InputText from "primevue/inputtext";
 import Textarea from "primevue/textarea";
 import Calendar from "primevue/calendar";
 import Dropdown from "primevue/dropdown";
+import Toast from "primevue/toast";
+import { useToast } from "primevue/usetoast";
 import { courseObject } from "@/dataObjects/courseObject";
 import { userObject } from "@/dataObjects/userObject";
 import { state } from "@/components/state";
@@ -88,6 +99,7 @@ export default defineComponent({
     Textarea,
     Calendar,
     Dropdown,
+    Toast,
   },
   setup() {
     const timeStart = ref();
@@ -173,6 +185,16 @@ export default defineComponent({
       }
     }
 
+    const toast = useToast();
+    const showInfo = () => {
+      toast.add({
+        severity: "info",
+        summary: "Send",
+        detail: "Send Formular",
+        life: 3000,
+      });
+    };
+
     onMounted(async () => {
       await getStudents();
       await getTeachers();
@@ -186,6 +208,7 @@ export default defineComponent({
       courseObject,
       selectedTeacher,
       sendCourse,
+      showInfo,
     };
   },
 });

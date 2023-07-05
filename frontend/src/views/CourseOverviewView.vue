@@ -21,7 +21,18 @@
         </router-link>
       </template>
     </VirtualScroller>
-    <Button @click="getCourses">Refresh</Button>
+    <div>
+      <Toast />
+      <div>
+        <Button
+          @click="
+            getCourses();
+            showInfo();
+          "
+          >Refresh</Button
+        >
+      </div>
+    </div>
   </div>
 </template>
 
@@ -31,6 +42,8 @@ import { courseObject } from "@/dataObjects/courseObject";
 import Button from "primevue/button";
 import Card from "primevue/card";
 import VirtualScroller from "primevue/virtualscroller";
+import Toast from "primevue/toast";
+import { useToast } from "primevue/usetoast";
 import { state } from "@/components/state";
 // import { useRouter } from "vue-router";
 
@@ -47,7 +60,18 @@ async function getCourses(): Promise<void> {
   } catch (reason) {
     return;
   }
+  showInfo();
 }
+
+const toast = useToast();
+const showInfo = () => {
+  toast.add({
+    severity: "info",
+    summary: "Refreshed",
+    detail: "Updated",
+    life: 3000,
+  });
+};
 
 // const router = useRouter();
 

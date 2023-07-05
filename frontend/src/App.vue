@@ -1,7 +1,6 @@
 <template>
-  <Toast />
   <nav>
-    <router-link to="/">Home</router-link> |
+    <router-link to="/">Übersicht</router-link> |
     <router-link to="/student">Student</router-link> |
     <router-link to="/teacher">Teacher</router-link> |
     <router-link to="/mask">Kurs Erstellen</router-link>

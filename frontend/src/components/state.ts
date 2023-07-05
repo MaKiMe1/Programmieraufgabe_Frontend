@@ -22,3 +22,33 @@ export async function getCourses(): Promise<void> {
     return;
   }
 }
+
+export async function getTeachers(): Promise<void> {
+  try {
+    const url = "/user/teachers";
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+    const jsonData: userObject[] = await response.json();
+    state.allTeachers = jsonData;
+  } catch (reason) {
+    return;
+  }
+}
+
+export async function getStudents(): Promise<void> {
+  try {
+    const url = "/user/students";
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+    const jsonData: userObject[] = await response.json();
+    state.allStudents = jsonData;
+  } catch (reason) {
+    return;
+  }
+}

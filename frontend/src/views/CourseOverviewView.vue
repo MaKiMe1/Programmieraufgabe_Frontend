@@ -25,7 +25,6 @@
 
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { courseObject } from "@/dataObjects/courseObject";
 import Button from "primevue/button";
 import Card from "primevue/card";
 import VirtualScroller from "primevue/virtualscroller";

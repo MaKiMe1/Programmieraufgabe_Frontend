@@ -1,5 +1,5 @@
 <template>
-  <div v-if="props.courseIndex != undefined" class="course">
+  <div v-if="course != undefined" class="course">
     <Panel :header="course.title">
       <p>
         {{ course.description }}
@@ -8,18 +8,23 @@
       <br />
       Kategorie: {{ course.category }}
       <br />
-      Lehrer: {{ course.teacher.name }} {{ course.teacher.surname }}
+      Lehrer:
+      <span v-if="course.teacher != undefined"
+        >{{ course.teacher.name }} {{ course.teacher.surname }}</span
+      >
       <br />
       Schüler:
       <span v-for="s in course.students" :key="s.id">
-        <span>{{ s.name }} {{ s.surname }}</span>
+        <span>{{ s.name }} {{ s.surname }}</span
+        ><br />
       </span>
     </Panel>
+    <Toast />
     <span>
       Ändere Lehrer:
       <Dropdown
         v-model="currentTeacher"
-        :options="allTeachers"
+        :options="state.allTeachers"
         option-label="name"
         option-value="id"
         placeholder="Lehrer"
@@ -31,7 +36,7 @@
       Füge Schüler hinzu:
       <Dropdown
         v-model="currentStudent"
-        :options="allStudents"
+        :options="courseStudents"
         option-label="name"
         option-value="id"
         placeholder="Schüler"
@@ -42,15 +47,16 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import Panel from "primevue/panel";
 import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
 import { state } from "@/components/state";
-import { userObject } from "@/dataObjects/userObject";
 import { useToast } from "primevue/usetoast";
+import Toast from "primevue/toast";
 import { getCourses } from "@/components/state";
-import { courseObject } from "@/dataObjects/courseObject";
+import { getStudents } from "@/components/state";
+import { getTeachers } from "@/components/state";
 
 const toast = useToast();
 
@@ -64,58 +70,21 @@ const course = state.allCourses[props.courseIndex];
 const currentTeacher = ref();
 const currentStudent = ref();
 
-const allStudents = ref<userObject[]>();
-const allTeachers = ref<userObject[]>();
+const courseStudents = ref([...state.allStudents]);
 
-async function getTeachers(): Promise<void> {
-  try {
-    const url = "/user/teachers";
-    const response = await fetch(url);
+watch(state.allStudents, () => {
+  filterStudents();
+});
 
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
-    const jsonData: userObject[] = await response.json();
-    allTeachers.value = jsonData;
-  } catch (reason) {
-    return;
-  }
-}
-
-async function getStudents(): Promise<void> {
-  try {
-    const url = "/user/students";
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
-    const jsonData: userObject[] = await response.json();
-    allStudents.value = jsonData;
-  } catch (reason) {
-    return;
-  }
+//filter students that already are in the course
+function filterStudents() {
+  courseStudents.value = [...state.allStudents];
   course.students.forEach((s) => {
-    allStudents.value?.filter((e) => {
-      return e.id != s.id;
-    });
+    courseStudents.value = courseStudents.value.filter((e) => e.id != s.id);
   });
 }
 
-let teacher = reactive<userObject>({
-  id: 0,
-  name: "",
-  surname: "",
-  birthDate: new Date(0),
-  courses: [],
-  teacher: false,
-  grade: 0,
-  subjects: [],
-});
-
 async function saveTeacher(): Promise<void> {
-  teacher.id = currentTeacher.value;
-  console.log(teacher.id);
   try {
     const url = "/course/" + course.id + "/teacher";
     const response = await fetch(url, {
@@ -152,7 +121,7 @@ async function saveStudent(): Promise<void> {
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ Object: { id: currentStudent.value } }),
+      body: JSON.stringify({ id: currentStudent.value }),
     });
 
     if (!response.ok) {
@@ -180,5 +149,6 @@ async function saveStudent(): Promise<void> {
 onMounted(async () => {
   await getTeachers();
   await getStudents();
+  filterStudents();
 });
 </script>

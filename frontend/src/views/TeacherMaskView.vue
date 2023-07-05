@@ -5,9 +5,15 @@
     <InputText v-model="surname" type="text" placeholder="Nachname"></InputText>
   </div>
   <br />
-  <div>
-    <InputText type="text" placeholder="Kurse"></InputText>
-  </div>
+  <Dropdown
+    v-model="selectedCourse"
+    :options="allCourses"
+    optionLabel="label"
+    optionValue="value"
+    :virtualScrollerOptions="{ itemSize: 38 }"
+    placeholder="Select Item"
+    class="w-full md:w-14rem"
+  />
   <br />
   <div>
     <Calendar v-model="date" dateFormat="dd/mm/yy" placeholder="Geburtstag" />
@@ -27,12 +33,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive } from "vue";
+import { defineComponent, ref, reactive, onMounted } from "vue";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
 import Dropdown from "primevue/dropdown";
 import Calendar from "primevue/calendar";
 import { userObject } from "@/dataObjects/userObject";
+import { courseObject } from "@/dataObjects/courseObject";
 
 export default defineComponent({
   name: "TeacherMaskView",
@@ -40,6 +47,7 @@ export default defineComponent({
     Button,
     InputText,
     Calendar,
+    Dropdown,
   },
   setup() {
     const date = ref();
@@ -48,6 +56,8 @@ export default defineComponent({
     const subjectName = "";
     let subjectsSplit = [];
     subjectsSplit = subjectName.split(" ");
+    const allCourses = ref<courseObject[]>();
+    const selectedCourse = ref();
     const userObject = reactive<userObject>({
       id: 0,
       name: name.value,
@@ -75,7 +85,36 @@ export default defineComponent({
         return;
       }
     }
-    return { date, userObject, subjectName, name, surname, sendTeacher };
+
+    async function getCourses(): Promise<void> {
+      try {
+        const url = "/course";
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        }
+        const jsonData: courseObject[] = await response.json();
+        allCourses.value = jsonData;
+      } catch (reason) {
+        console.log(reason);
+      }
+    }
+
+    onMounted(async () => {
+      await getCourses();
+    });
+    return {
+      date,
+      userObject,
+      subjectName,
+      name,
+      surname,
+      sendTeacher,
+      getCourses,
+      allCourses,
+      selectedCourse,
+    };
   },
 });
 </script>

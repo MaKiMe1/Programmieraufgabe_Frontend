@@ -47,7 +47,7 @@
       optionLabel="name"
       optionValue="id"
       :virtualScrollerOptions="{ itemSize: 38 }"
-      placeholder="Select Item"
+      placeholder="Lehrer"
       class="w-full md:w-14rem"
     />
   </div>
@@ -59,7 +59,7 @@
       optionLabel="name"
       optionValue="id"
       :virtualScrollerOptions="{ itemSize: 38 }"
-      placeholder="Select Item"
+      placeholder="Schüler"
       class="w-full md:w-14rem"
     />
   </div>
@@ -67,13 +67,7 @@
   <div class="card flex justify-content-center">
     <Toast />
     <div class="flex flex-wrap gap-2">
-      <Button
-        @click="
-          sendCourse();
-          showInfo();
-        "
-        >Send</Button
-      >
+      <Button @click="sendCourse()">Send</Button>
     </div>
   </div>
 </template>
@@ -90,6 +84,8 @@ import { useToast } from "primevue/usetoast";
 import { courseObject } from "@/dataObjects/courseObject";
 import { userObject } from "@/dataObjects/userObject";
 import { state } from "@/components/state";
+import { getTeachers } from "@/components/state";
+import { getStudents } from "@/components/state";
 
 export default defineComponent({
   name: "CourseMaskView",
@@ -107,6 +103,7 @@ export default defineComponent({
     const selectedStudent = ref();
     const selectedTeacher = ref();
     const teacher = ref();
+    const toast = useToast();
     let selectedStudentObject: userObject[] = [];
     let courseObject = reactive<courseObject>({
       id: 0,
@@ -130,41 +127,26 @@ export default defineComponent({
           body: JSON.stringify(courseObject),
         });
         console.log(JSON.stringify(courseObject));
-        if (!response.ok) throw new Error(response.statusText);
-        const serverMessage = await response.json;
-        console.log(serverMessage);
+        if (!response.ok) {
+          const serverMessage = await response.json;
+          console.log(serverMessage);
+          toast.add({
+            severity: "error",
+            summary: "Error",
+            detail: "Could not add course",
+            life: 3000,
+          });
+          throw new Error(response.statusText);
+        } else {
+          toast.add({
+            severity: "success",
+            summary: "Success",
+            detail: "Course added successfully",
+            life: 3000,
+          });
+        }
       } catch (reason) {
         console.log("reason: ", reason);
-        return;
-      }
-    }
-
-    async function getStudents(): Promise<void> {
-      try {
-        const url = "/user/students";
-        const response = await fetch(url);
-
-        if (!response.ok) {
-          throw new Error(response.statusText);
-        }
-        const jsonData: userObject[] = await response.json();
-        state.allStudents = jsonData;
-      } catch (reason) {
-        return;
-      }
-    }
-
-    async function getTeachers(): Promise<void> {
-      try {
-        const url = "/user/teachers";
-        const response = await fetch(url);
-
-        if (!response.ok) {
-          throw new Error(response.statusText);
-        }
-        const jsonData: userObject[] = await response.json();
-        state.allTeachers = jsonData;
-      } catch (reason) {
         return;
       }
     }
@@ -185,16 +167,6 @@ export default defineComponent({
       }
     }
 
-    const toast = useToast();
-    const showInfo = () => {
-      toast.add({
-        severity: "info",
-        summary: "Send",
-        detail: "Send Formular",
-        life: 3000,
-      });
-    };
-
     onMounted(async () => {
       await getStudents();
       await getTeachers();
@@ -208,7 +180,6 @@ export default defineComponent({
       courseObject,
       selectedTeacher,
       sendCourse,
-      showInfo,
     };
   },
 });

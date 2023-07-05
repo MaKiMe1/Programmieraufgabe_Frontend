@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <div class="StudentMask">
     <h1>Schüler erstellen</h1>
     <InputText
@@ -28,7 +29,7 @@
       optionLabel="title"
       optionValue="id"
       :virtualScrollerOptions="{ itemSize: 38 }"
-      placeholder="Select Item"
+      placeholder="Kurs"
       class="w-full md:w-14rem"
     />
   </div>
@@ -56,6 +57,8 @@ import InputNumber from "primevue/inputnumber";
 import { userObject } from "@/dataObjects/userObject";
 import { courseObject } from "@/dataObjects/courseObject";
 import { state } from "@/components/state";
+import { useToast } from "primevue/usetoast";
+import Toast from "primevue/toast";
 
 export default defineComponent({
   name: "StudentMaskView",
@@ -65,6 +68,7 @@ export default defineComponent({
     Dropdown,
     Calendar,
     InputNumber,
+    Toast,
   },
   setup() {
     const date = ref();
@@ -72,6 +76,7 @@ export default defineComponent({
     const surname = ref();
     const course = ref();
     const grade = ref();
+    const toast = useToast();
     const selectedCourse = ref();
     let selectedCourseObject: courseObject[] = [];
     let userObject = reactive<userObject>({
@@ -95,9 +100,24 @@ export default defineComponent({
           body: JSON.stringify(userObject),
         });
         console.log(JSON.stringify(userObject));
-        if (!response.ok) throw new Error(response.statusText);
-        const serverMessage = await response.json;
-        console.log(serverMessage);
+        if (!response.ok) {
+          const serverMessage = await response.json;
+          console.log(serverMessage);
+          toast.add({
+            severity: "error",
+            summary: "Error",
+            detail: "Could not add student",
+            life: 3000,
+          });
+          throw new Error(response.statusText);
+        } else {
+          toast.add({
+            severity: "success",
+            summary: "Success",
+            detail: "Student added successfully",
+            life: 3000,
+          });
+        }
       } catch (reason) {
         console.log("reason: ", reason);
         return;

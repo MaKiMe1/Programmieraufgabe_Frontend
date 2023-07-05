@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <div class="TeacherMask">
     <h1>Lehrer erstellen</h1>
     <InputText
@@ -20,21 +21,12 @@
       optionLabel="title"
       optionValue="id"
       :virtualScrollerOptions="{ itemSize: 38 }"
-      placeholder="Select Item"
+      placeholder="Kurs"
       class="w-full md:w-14rem"
     />
   </div>
   <br />
-  <!-- <div>
-    <Dropdown
-      v-model="selectedCourse"
-      :options="courseArray"
-      :virtualScrollerOptions="{ itemSize: 38 }"
-      placeholder="Select Item"
-      class="w-full md:w-14rem"
-    />
-  </div>
-  <br /> -->
+
   <div>
     <Calendar
       v-model="userObject.birthDate"
@@ -65,6 +57,8 @@ import Dropdown from "primevue/dropdown";
 import { userObject } from "@/dataObjects/userObject";
 import { courseObject } from "@/dataObjects/courseObject";
 import { state } from "@/components/state";
+import Toast from "primevue/toast";
+import { useToast } from "primevue/usetoast";
 
 export default defineComponent({
   name: "TeacherMaskView",
@@ -73,12 +67,14 @@ export default defineComponent({
     InputText,
     Calendar,
     Dropdown,
+    Toast,
   },
   setup() {
     const date = ref();
     const subjectName = ref();
     const selectedCourse = ref();
     const courseArray: string[] = [];
+    const toast = useToast();
     let selectedCourseObject: courseObject[] = [];
 
     let userObject = reactive<userObject>({
@@ -103,9 +99,24 @@ export default defineComponent({
           body: JSON.stringify(userObject),
         });
         console.log(JSON.stringify(userObject));
-        if (!response.ok) throw new Error(response.statusText);
-        const serverMessage = await response.json;
-        console.log(serverMessage);
+        if (!response.ok) {
+          const serverMessage = await response.json;
+          console.log(serverMessage);
+          toast.add({
+            severity: "error",
+            summary: "Error",
+            detail: "Could not add teacher",
+            life: 3000,
+          });
+          throw new Error(response.statusText);
+        } else {
+          toast.add({
+            severity: "success",
+            summary: "Success",
+            detail: "Teacher added successfully",
+            life: 3000,
+          });
+        }
       } catch (reason) {
         console.log("reason: ", reason);
         return;

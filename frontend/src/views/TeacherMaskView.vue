@@ -1,16 +1,46 @@
 <template>
   <div class="TeacherMask">
     <h1>Lehrer erstellen</h1>
-    <InputText v-model="name" type="text" placeholder="Vorname"></InputText>
-    <InputText v-model="surname" type="text" placeholder="Nachname"></InputText>
+    <InputText
+      v-model="userObject.name"
+      type="text"
+      placeholder="Vorname"
+    ></InputText>
+    <InputText
+      v-model="userObject.surname"
+      type="text"
+      placeholder="Nachname"
+    ></InputText>
   </div>
   <br />
   <div>
-    <InputText type="text" placeholder="Kurse"></InputText>
+    <Dropdown
+      v-model="selectedCourse"
+      :options="state.allCourses"
+      optionLabel="title"
+      optionValue="id"
+      :virtualScrollerOptions="{ itemSize: 38 }"
+      placeholder="Select Item"
+      class="w-full md:w-14rem"
+    />
   </div>
   <br />
+  <!-- <div>
+    <Dropdown
+      v-model="selectedCourse"
+      :options="courseArray"
+      :virtualScrollerOptions="{ itemSize: 38 }"
+      placeholder="Select Item"
+      class="w-full md:w-14rem"
+    />
+  </div>
+  <br /> -->
   <div>
-    <Calendar v-model="date" dateFormat="dd/mm/yy" placeholder="Geburtstag" />
+    <Calendar
+      v-model="userObject.birthDate"
+      dateFormat="dd/mm/yy"
+      placeholder="Geburtstag"
+    />
   </div>
   <br />
   <div>
@@ -27,12 +57,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive } from "vue";
+import { defineComponent, ref, reactive, onMounted } from "vue";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
-import Dropdown from "primevue/dropdown";
 import Calendar from "primevue/calendar";
+import Dropdown from "primevue/dropdown";
 import { userObject } from "@/dataObjects/userObject";
+import { courseObject } from "@/dataObjects/courseObject";
+import { state } from "@/components/state";
 
 export default defineComponent({
   name: "TeacherMaskView",
@@ -40,26 +72,30 @@ export default defineComponent({
     Button,
     InputText,
     Calendar,
+    Dropdown,
   },
   setup() {
     const date = ref();
-    const name = ref();
-    const surname = ref();
-    const subjectName = "";
-    let subjectsSplit = [];
-    subjectsSplit = subjectName.split(" ");
-    const userObject = reactive<userObject>({
+    const subjectName = ref();
+    const selectedCourse = ref();
+    const courseArray: string[] = [];
+    let selectedCourseObject: courseObject[] = [];
+
+    let userObject = reactive<userObject>({
       id: 0,
-      name: name.value,
-      surname: surname.value,
+      name: "",
+      surname: "",
       birthDate: date.value,
       courses: [],
       teacher: true,
       grade: 0,
-      subjects: subjectsSplit,
+      subjects: [],
     });
 
     async function sendTeacher(): Promise<void> {
+      addCourseToDataObject();
+      userObject.courses = selectedCourseObject;
+      userObject.subjects.push(subjectName.value);
       try {
         const response = await fetch("/user", {
           method: "POST",
@@ -75,7 +111,33 @@ export default defineComponent({
         return;
       }
     }
-    return { date, userObject, subjectName, name, surname, sendTeacher };
+
+    function addCourseToDataObject() {
+      for (let i = 0; i < state.allCourses.length; i++) {
+        if (state.allCourses[i].id == selectedCourse.value) {
+          selectedCourseObject.push(state.allCourses[i]);
+        }
+      }
+    }
+
+    function yourFunction() {
+      console.log("subject:" + subjectName.value);
+
+      setTimeout(yourFunction, 5000);
+    }
+
+    yourFunction();
+
+    return {
+      date,
+      userObject,
+      subjectName,
+      sendTeacher,
+      selectedCourse,
+      state,
+      courseArray,
+      addCourseToDataObject,
+    };
   },
 });
 </script>

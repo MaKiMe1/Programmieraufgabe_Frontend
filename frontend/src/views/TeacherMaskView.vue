@@ -120,14 +120,6 @@ export default defineComponent({
       }
     }
 
-    function yourFunction() {
-      console.log("subject:" + subjectName.value);
-
-      setTimeout(yourFunction, 5000);
-    }
-
-    yourFunction();
-
     return {
       date,
       userObject,

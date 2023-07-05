@@ -26,6 +26,11 @@ const routes: Array<RouteRecordRaw> = [
       };
     },
   },
+  {
+    path: "/mask",
+    name: "mask",
+    component: () => import("../views/CourseMaskView.vue"),
+  },
 ];
 
 const router = createRouter({

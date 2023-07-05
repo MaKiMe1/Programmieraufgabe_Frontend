@@ -23,14 +23,22 @@
   <br />
   <div>
     <Dropdown
-      v-model="userObject.courses"
-      placeholder="Wähle einen Kurs"
+      v-model="selectedCourse"
+      :options="state.allCourses"
+      optionLabel="title"
+      optionValue="id"
+      :virtualScrollerOptions="{ itemSize: 38 }"
+      placeholder="Select Item"
       class="w-full md:w-14rem"
     />
   </div>
   <br />
   <div>
-    <Calendar v-model="date" dateFormat="dd/mm/yy" placeholder="Geburtstag" />
+    <Calendar
+      v-model="userObject.birthDate"
+      dateFormat="dd/mm/yy"
+      placeholder="Geburtstag"
+    />
   </div>
   <br />
   <div>
@@ -47,6 +55,7 @@ import Calendar from "primevue/calendar";
 import InputNumber from "primevue/inputnumber";
 import { userObject } from "@/dataObjects/userObject";
 import { courseObject } from "@/dataObjects/courseObject";
+import { state } from "@/components/state";
 
 export default defineComponent({
   name: "StudentMaskView",
@@ -63,18 +72,22 @@ export default defineComponent({
     const surname = ref();
     const course = ref();
     const grade = ref();
-    const userObject = reactive<userObject>({
+    const selectedCourse = ref();
+    let selectedCourseObject: courseObject[] = [];
+    let userObject = reactive<userObject>({
       id: 0,
       name: "",
       surname: "",
       birthDate: date.value,
       courses: [],
-      isTeacher: false,
+      teacher: false,
       grade: 0,
       subjects: [],
     });
 
     async function sendStudent(): Promise<void> {
+      addCourseToDataObject();
+      userObject.courses = selectedCourseObject;
       try {
         const response = await fetch("/user", {
           method: "POST",
@@ -91,15 +104,25 @@ export default defineComponent({
       }
     }
 
-    function yourFunction() {
-      console.log("hi");
-      console.log(userObject.name);
-      setTimeout(yourFunction, 5000);
+    function addCourseToDataObject() {
+      for (let i = 0; i < state.allCourses.length; i++) {
+        if (state.allCourses[i].id == selectedCourse.value) {
+          selectedCourseObject.push(state.allCourses[i]);
+        }
+      }
     }
 
-    yourFunction();
-
-    return { date, name, surname, course, grade, userObject, sendStudent };
+    return {
+      date,
+      name,
+      surname,
+      course,
+      grade,
+      userObject,
+      selectedCourse,
+      state,
+      sendStudent,
+    };
   },
 });
 </script>

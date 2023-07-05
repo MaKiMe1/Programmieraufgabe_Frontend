@@ -16,15 +16,31 @@
   <div>
     <Dropdown
       v-model="selectedCourse"
-      :options="courseArray"
+      :options="state.allCourses"
+      optionLabel="title"
+      optionValue="id"
       :virtualScrollerOptions="{ itemSize: 38 }"
       placeholder="Select Item"
       class="w-full md:w-14rem"
     />
   </div>
   <br />
+  <!-- <div>
+    <Dropdown
+      v-model="selectedCourse"
+      :options="courseArray"
+      :virtualScrollerOptions="{ itemSize: 38 }"
+      placeholder="Select Item"
+      class="w-full md:w-14rem"
+    />
+  </div>
+  <br /> -->
   <div>
-    <Calendar v-model="date" dateFormat="dd/mm/yy" placeholder="Geburtstag" />
+    <Calendar
+      v-model="userObject.birthDate"
+      dateFormat="dd/mm/yy"
+      placeholder="Geburtstag"
+    />
   </div>
   <br />
   <div>
@@ -60,17 +76,10 @@ export default defineComponent({
   },
   setup() {
     const date = ref();
-    const subjectName = "";
+    const subjectName = ref();
     const selectedCourse = ref();
     const courseArray: string[] = [];
-    let subjectsSplit = [];
     let selectedCourseObject: courseObject[] = [];
-
-    subjectsSplit = subjectName.split(" ");
-
-    state.allCourses.forEach((item) =>
-      courseArray.push(item.title + ":" + item.id.toString())
-    );
 
     let userObject = reactive<userObject>({
       id: 0,
@@ -78,14 +87,15 @@ export default defineComponent({
       surname: "",
       birthDate: date.value,
       courses: [],
-      isTeacher: true,
+      teacher: true,
       grade: 0,
-      subjects: subjectsSplit,
+      subjects: [],
     });
 
     async function sendTeacher(): Promise<void> {
       addCourseToDataObject();
       userObject.courses = selectedCourseObject;
+      userObject.subjects.push(subjectName.value);
       try {
         const response = await fetch("/user", {
           method: "POST",
@@ -103,13 +113,21 @@ export default defineComponent({
     }
 
     function addCourseToDataObject() {
-      let splitedSelect = selectedCourse.value.split(":");
       for (let i = 0; i < state.allCourses.length; i++) {
-        if (state.allCourses[i].id == parseInt(splitedSelect[1])) {
+        if (state.allCourses[i].id == selectedCourse.value) {
           selectedCourseObject.push(state.allCourses[i]);
         }
       }
     }
+
+    function yourFunction() {
+      console.log("subject:" + subjectName.value);
+
+      setTimeout(yourFunction, 5000);
+    }
+
+    yourFunction();
+
     return {
       date,
       userObject,

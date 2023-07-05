@@ -6,7 +6,7 @@ export interface userObject {
   surname: string;
   birthDate: Date;
   courses: courseObject[];
-  isTeacher: boolean;
+  teacher: boolean;
   grade: number;
   subjects: string[];
 }

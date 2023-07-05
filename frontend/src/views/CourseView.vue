@@ -1,20 +1,37 @@
 <template>
-  <div class="course">
-    import Panel from "primevue/panel";
-    <Panel header="Title">
-      <p></p>
-    </Panel>
+  <div v-if="props.courseIndex != undefined" class="course">
+    <Panel :header="state.allCourses[props.courseIndex].title"> </Panel>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { defineComponent, ref } from "vue";
 import Panel from "primevue/panel";
+import { state } from "@/components/state";
+import { useRoute } from "vue-router";
 
-export default defineComponent({
-  name: "CourseView",
-  components: {
-    Panel,
-  },
-});
+interface Props {
+  courseIndex: number;
+}
+
+const props = defineProps<Props>();
+
+// index.value = parseInt(route.params.id);
+
+// export default defineComponent({
+//   name: "CourseView",
+//   components: {
+//     Panel,
+//   },
+//   setup() {
+//     return {
+//       state,
+//       index,
+//       route,
+//     };
+//   },
+//   props: {
+//     courseIndex: Number,
+//   },
+// });
 </script>

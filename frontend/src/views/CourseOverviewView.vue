@@ -3,9 +3,9 @@
     <h1>Kursübersicht</h1>
     <VirtualScroller
       :items="state.allCourses"
-      :itemSize="50"
+      :itemSize="100"
       class="border-1 surface-border border-round"
-      style="width: 200px; height: 200px"
+      style="width: 1600px; height: 1000px"
     >
       <template v-slot:item="{ item }">
         <router-link :to="{ name: 'course', params: { id: item.id - 1 } }">
@@ -14,9 +14,7 @@
             <template #content>
               <p>{{ item.description }}</p></template
             >
-            <template #footer>
-              <!-- <Button @click="showCourse(item.id)">Show</Button> -->
-            </template>
+            <template #footer> </template>
           </Card>
         </router-link>
       </template>
@@ -37,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
+import { onMounted } from "vue";
 import { courseObject } from "@/dataObjects/courseObject";
 import Button from "primevue/button";
 import Card from "primevue/card";
@@ -87,23 +85,4 @@ const showInfo = () => {
 onMounted(async () => {
   await getCourses();
 });
-
-// export default defineComponent({
-//   name: "CourseOverviewView",
-//   components: {
-//     VirtualScroller,
-//     Button,
-//     Card,
-//   },
-//   setup() {
-//     return {
-//       onMounted,
-//       getCourses,
-//       showCourse,
-//       state,
-//       router,
-//       useRouter,
-//     };
-//   },
-// });
 </script>

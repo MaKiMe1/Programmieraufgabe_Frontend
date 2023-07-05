@@ -69,7 +69,7 @@ export default defineComponent({
       surname: "",
       birthDate: date.value,
       courses: [],
-      isTeacher: false,
+      teacher: false,
       grade: 0,
       subjects: [],
     });

@@ -22,13 +22,7 @@
     <div>
       <Toast />
       <div>
-        <Button
-          @click="
-            getCourses();
-            showInfo();
-          "
-          >Refresh</Button
-        >
+        <Button @click="showInfo()">Refresh</Button>
       </div>
     </div>
   </div>
@@ -42,23 +36,7 @@ import VirtualScroller from "primevue/virtualscroller";
 import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
 import { state } from "@/components/state";
-// import { useRouter } from "vue-router";
-
-async function getCourses(): Promise<void> {
-  try {
-    const url = "/course";
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
-    const jsonData: courseObject[] = await response.json();
-    state.allCourses = jsonData;
-  } catch (reason) {
-    return;
-  }
-  showInfo();
-}
+import { getCourses } from "@/components/state";
 
 const toast = useToast();
 const showInfo = () => {
@@ -69,17 +47,6 @@ const showInfo = () => {
     life: 3000,
   });
 };
-
-// const router = useRouter();
-
-// function showCourse(id: Number): void {
-//   router.push({
-//     path: "/kurs",
-//     params: {
-//       id
-//     },
-//   });
-// }
 
 onMounted(async () => {
   await getCourses();

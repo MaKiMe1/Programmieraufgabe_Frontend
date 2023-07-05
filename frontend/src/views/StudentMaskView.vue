@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, defineProps, reactive, ref } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
 import Dropdown from "primevue/dropdown";
